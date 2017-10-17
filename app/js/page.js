@@ -33,15 +33,20 @@ export class Page {
       this.options.template = this.name;
   }
 
-  display() {
-    console.log('[page]', 'Displaying page', this.name);
+  display(params = {}) {
+    console.log('[page]', 'Displaying page', this.name, params);
+
+    document.querySelectorAll('nav div').forEach((el) => { el.classList.remove('active') });
+    let nav = document.querySelector(`nav div[data-nav="${this.name}"]`);
+    if (nav) nav.classList.add('active');
+
 
     var pageTemplate = require(`templates/${this.options.template}.jade`);
 
-    this.options.container.innerHTML = pageTemplate(this.trigger('locals'));
+    this.options.container.innerHTML = pageTemplate(Object.assign(params, this.trigger('locals')));
     currentPage = this.name;
 
-    this.trigger('initialize');
+    this.trigger('initialize', params);
 
     return this;
   }
@@ -68,10 +73,10 @@ export class Page {
     return this;
   }
 
-  trigger(name, args) {
+  trigger(name, args = {}) {
     if (!(name in this.events)) return null;
 
-    return this.events[name].apply(this, args);
+    return this.events[name].apply(this, Array.isArray(args) ? args : [args]);
   }
 }
 
