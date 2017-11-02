@@ -1,5 +1,6 @@
 import * as page from 'js/page.js';
 import * as pages from 'js/page.definitions.js';
+import * as state from 'js/state.js';
 
 import navTemplate from 'templates/nav.jade';
 
@@ -15,7 +16,7 @@ function display() {
 
   pages.initialize();
 
-  page.get('home').display();
+  state.initialize();
 }
 
 function nav() {
@@ -23,13 +24,8 @@ function nav() {
     el.addEventListener('click', function(e) {
       e.preventDefault();
 
-      page.current().destroy();
-
-      document.querySelectorAll('nav div').forEach((el) => { el.classList.remove('active') });
-      el.classList.add('active');
-
       var target = el.dataset.nav;
-      page.get(target).display();
+      page.go(target);
     });
   });
 }
